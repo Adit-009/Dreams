@@ -13,6 +13,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SplashScreen } from "../components/layout/SplashScreen";
+import { ScrollReveal } from "../components/layout/ScrollReveal";
+import { PageTransition } from "../components/layout/PageTransition";
 import { ShopProvider } from "../components/shop/store";
 import { Header, BottomNavigation, Footer } from "../components/shop/common";
 
@@ -125,9 +127,14 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <SplashScreen />
+      <ScrollReveal />
       <ShopProvider>
         <Header />
-        <main><Outlet /></main>
+        <main>
+          <PageTransition>
+            <Outlet />
+          </PageTransition>
+        </main>
         <Footer />
         <BottomNavigation />
       </ShopProvider>
