@@ -82,10 +82,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "DREAMS · Baking Supplies & More" },
+      { title: "Dreams" },
       { name: "description", content: "Your little world of baking ingredients, decorations, packaging and tools." },
-      { name: "author", content: "DREAMS" },
-      { property: "og:title", content: "DREAMS · Baking Supplies & More" },
+      { name: "author", content: "Dreams" },
+      { property: "og:title", content: "Dreams" },
       { property: "og:description", content: "Everything you need to bake better." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -1,4 +1,4 @@
-import {Link,useLocation} from '@tanstack/react-router';
+import {Link,useLocation,useNavigate} from '@tanstack/react-router';
 import {ArrowLeft,ArrowRight,ChefHat,ShoppingCart,Heart,Home,Grid2X2,UserRound,Search,Instagram,MapPin,Minus,Plus,Truck,ShieldCheck,Package,ChevronRight} from 'lucide-react';
 import {useState} from 'react';
 import {Button} from '@/components/ui/button';
@@ -10,7 +10,33 @@ export function Header(){const {cart}=useShop();return <header className="site-h
 export function BottomNavigation(){const path=useLocation().pathname;const {cart}=useShop();return <nav className="bottom-nav">{[[Home,'Home','/'],[Grid2X2,'Categories','/categories'],[ShoppingCart,'Cart','/cart'],[UserRound,'Profile','/profile']].map(([Icon,label,to])=><Link key={to} to={to} className={path===to?'active':''}><span><Icon size={21}/>{to==='/cart'&&cart.length>0&&<b className="count">{cart.reduce((n,i)=>n+i.qty,0)}</b>}</span>{label}</Link>)}</nav>}
 export function Footer(){return <footer><div className="footer-inner"><div><Brand/><p>Everything you need to bake better.</p><a href="https://www.instagram.com/d_r_e_a_m_s_5661/" target="_blank" rel="noreferrer"><Instagram size={17}/> @d_r_e_a_m_s_5661</a></div><div><h4>Explore DREAMS</h4><Link to="/categories">All Categories</Link><Link to="/about">About Us</Link><Link to="/contact">Contact & Support</Link></div><div><h4>Your little baking world</h4><Link to="/orders">My Orders</Link><Link to="/wishlist">Wishlist</Link><Link to="/profile">My Account</Link></div><div className="footer-note"><ChefHat size={30}/><p>From your first cupcake<br/>to your next masterpiece.</p></div></div><div className="footer-bottom">© 2026 DREAMS · Baking Supplies & More <span>Made for the love of baking.</span></div></footer>}
 export function SectionTitle({title,eyebrow,to,label='View All'}){return <div className="section-title"><div>{eyebrow&&<span className="eyebrow">{eyebrow}</span>}<h2>{title}</h2></div>{to&&<Link to={to}>{label}<ArrowRight size={16}/></Link>}</div>}
-export function PageTitle({title,subtitle}){return <div className="page-title"><Link to="/" aria-label="Back home"><ArrowLeft size={20}/></Link><div><h1>{title}</h1>{subtitle&&<p>{subtitle}</p>}</div></div>}
+export function PageTitle({title,subtitle,backTo,onBack}){
+  const navigate = useNavigate();
+  const handleBack = (e) => {
+    e?.preventDefault();
+    if (onBack) {
+      onBack();
+      return;
+    }
+    if (backTo) {
+      navigate({ to: backTo });
+      return;
+    }
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      window.history.back();
+    } else {
+      navigate({ to: '/' });
+    }
+  };
+  return (
+    <div className="page-title">
+      <button type="button" onClick={handleBack} aria-label="Go back" className="back-btn">
+        <ArrowLeft size={20}/>
+      </button>
+      <div><h1>{title}</h1>{subtitle&&<p>{subtitle}</p>}</div>
+    </div>
+  );
+}
 export function ProductCard({product}){const {wishlist,toggle,add}=useShop();return <article className="product-card"><div className="product-photo"><Link to="/product/$slug" params={{slug:product.id}}><img src={product.image} alt={product.name} loading="lazy" width="400" height="400"/></Link>{product.badge&&<span className="product-badge">{product.badge}</span>}<Button size="icon" variant="ghost" className={`wishlist-button ${wishlist.includes(product.id)?'saved':''}`} onClick={()=>toggle(product.id)} aria-label={`${wishlist.includes(product.id)?'Remove from':'Add to'} wishlist: ${product.name}`}><Heart/></Button></div><div className="product-info"><Link to="/product/$slug" params={{slug:product.id}} className="product-name">{product.name}</Link><span className="product-size">{product.size}</span><div className="price-row"><strong>{money(product.price)}</strong>{product.original&&<del>{money(product.original)}</del>}<span className="rating">★ 4.8</span></div><Button variant="add" className="add-button" onClick={()=>add(product)}>Add <ShoppingCart size={15}/></Button></div></article>}
 export function ProductGrid({items}){return <div className="product-grid">{items.map(p=><ProductCard key={p.id} product={p}/>)}</div>}
 export function CategoryCard({category}){return <Link to="/category/$slug" params={{slug:category.slug}} className="category-card"><img src={category.image} alt={category.name} width="400" height="400" loading="lazy"/><div>{category.name}<ArrowRight size={17}/></div></Link>}

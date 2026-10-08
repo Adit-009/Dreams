@@ -6,11 +6,97 @@ import { categories, products, money } from '@/data/shop';
 import { productService, priceForSize } from '@/services/shop';
 import { useShop } from './store';
 import { Brand, SearchBar, SectionTitle, ProductGrid, CategoryCard, PageTitle, Quantity, TrustStrip, Empty } from './common';
+import { ProductReviews } from './reviews';
 import hero from '@/assets/baking-hero.jpg';
 export function HomePage() { return <div className="content home-content"><div className="mobile-search"><SearchBar /></div><section className="hero"><img src={hero} alt="Pink strawberry cake with butterfly decorations and chocolate baking supplies" width="1536" height="1024" /><div className="hero-content"><span className="eyebrow">A LITTLE MAGIC STARTS HERE</span><h1>Bake Something<br /><em>Beautiful.</em></h1><p>Ingredients · Decorations<br className="mobile-only" /> · Packaging · And More</p><Button asChild className="hero-button"><Link to="/categories">Shop Now <ArrowRight size={16} /></Link></Button></div><span className="hero-label"><Heart size={12} /> For the love of baking</span></section><div className="category-shortcuts">{categories.map(c => <Link className="shortcut" key={c.slug} to="/category/$slug" params={{ slug: c.slug }}><img src={c.image} alt="" width="200" height="160" /><span>{c.name}</span></Link>)}</div><SectionTitle title="Best Sellers" eyebrow="THE ONES YOU LOVE" to="/categories" /><ProductGrid items={products.slice(0, 4)} /><section className="promo-band"><img src={categories[4].image} alt="Pink cake packaging boxes" loading="lazy" width="400" height="400" /><div><span className="eyebrow">THE PERFECT FINISHING TOUCH</span><h2>Beautiful bakes. Beautifully boxed.</h2><p>Give your creations the packaging they deserve.</p></div><Link to="/category/$slug" params={{ slug: 'packaging' }}>Shop Packaging <ArrowRight size={16} /></Link></section><SectionTitle title="A little bit of everything" eyebrow="EXPLORE YOUR BAKING WORLD" to="/categories" label="All Categories" /><div className="category-grid">{categories.map(c => <CategoryCard key={c.slug} category={c} />)}</div><TrustStrip /><section className="instagram-section"><div className="instagram-header"><div className="instagram-title-wrap"><span className="eyebrow flex items-center gap-1.5"><Instagram size={13} /> BAKE · CREATE · SHARE</span><h2>Made with a little DREAMS</h2><p>Tag <strong>@d_r_e_a_m_s_5661</strong> in your sweet creations to be featured in our community gallery.</p></div><a href="https://www.instagram.com/d_r_e_a_m_s_5661/" target="_blank" rel="noreferrer" className="instagram-btn" aria-label="Follow @d_r_e_a_m_s_5661 on Instagram"><span className="instagram-btn-icon"><Instagram size={17} /></span><span>Follow <strong>@d_r_e_a_m_s_5661</strong></span><ArrowRight size={15} className="instagram-btn-arrow" /></a></div><div className="instagram-grid">{[{ src: hero, label: 'Strawberry celebration cake' }, { src: categories[2].image, label: 'Butterfly cake decorations' }, { src: categories[3].image, label: 'Pastel birthday candles' }, { src: categories[5].image, label: 'Baking and piping supplies' }].map((item, i) => <a key={item.src} href="https://www.instagram.com/d_r_e_a_m_s_5661/" target="_blank" rel="noreferrer" className="instagram-card" aria-label={`View ${item.label} on Instagram`}><img src={item.src} alt={item.label} loading="lazy" width="400" height="400" /><div className="instagram-overlay"><div className="instagram-overlay-icon"><Instagram size={20} /></div><span className="instagram-overlay-text">{item.label}</span><span className="instagram-overlay-view">View on Instagram ↗</span></div></a>)}</div></section></div> }
 export function CategoriesPage() { return <div className="content"><PageTitle title="Categories" subtitle="Everything for your next beautiful bake" /><div className="category-grid">{categories.map(c => <CategoryCard key={c.slug} category={c} />)}</div></div> }
 export function CategoryPage({ slug }) { const category = categories.find(c => c.slug === slug); const [filter, setFilter] = useState('All'), [sort, setSort] = useState('featured'); if (!category) return <div className="content"><Empty title="Category not found" description="Find your baking essentials in our shop." /></div>; const all = products.filter(p => p.category === slug); const chips = ['All', ...new Set(all.map(p => p.type))]; let shown = all.filter(p => filter === 'All' || filter === p.type); if (sort === 'low') shown = [...shown].sort((a, b) => a.price - b.price); if (sort === 'high') shown = [...shown].sort((a, b) => b.price - a.price); return <div className="content"><PageTitle title={category.name} subtitle="A little inspiration for your next creation" /><div className="filter-row">{chips.map(chip => <Button key={chip} className="filter-chip" variant={filter === chip ? 'default' : 'secondary'} onClick={() => setFilter(chip)}>{chip}</Button>)}</div><div className="listing-meta"><span>{shown.length} Products</span><label>Sort <select aria-label="Sort products" value={sort} onChange={e => setSort(e.target.value)}><option value="featured">Featured</option><option value="low">Price: Low to High</option><option value="high">Price: High to Low</option></select></label></div><ProductGrid items={shown} /></div> }
-export function ProductPage({ slug }) { const product = productService.get(slug); const [size, setSize] = useState(product?.size), [qty, setQty] = useState(1); const { add, toggle, wishlist } = useShop(); if (!product) return <div className="content"><Empty title="Product not found" description="There are more lovely supplies waiting for you." /></div>; const price = priceForSize(product, size); const sizes = product.id === 'cocoa-powder' ? ['50 g', '100 g', '200 g'] : [product.size]; return <div className="content"><PageTitle title="A little baking essential" /><div className="detail-layout"><div className="detail-photo"><img src={product.image} alt={product.name} width="700" height="700" /><Button size="icon" variant="ghost" className={`wishlist-button ${wishlist.includes(product.id) ? 'saved' : ''}`} onClick={() => toggle(product.id)} aria-label="Save product to wishlist"><Heart /></Button></div><div className="detail-info"><span className="eyebrow">DREAMS BAKING ESSENTIALS</span><h1>{product.name}</h1><p>{size} · Carefully selected · Perfect for baking</p><div className="price-row detail-price"><strong>{money(price)}</strong>{product.original && <del>{money(product.original)}</del>}{product.original && <span className="discount">{Math.round((1 - product.price / product.original) * 100)}% OFF</span>}</div><div className="availability"><span className="flex items-center gap-1"><Star size={13} /> 4.8 <span className="text-muted-foreground">(120 demo reviews)</span></span><span className="stock">● In Stock</span></div><span className="field-label">Select Size</span><div className="size-options">{sizes.map(s => <Button key={s} variant={size === s ? 'selected' : 'outline'} className="size-option" onClick={() => setSize(s)}>{s}<small>{money(priceForSize(product, s))}</small></Button>)}</div><span className="field-label">Quantity</span><Quantity value={qty} onMinus={() => setQty(q => Math.max(1, q - 1))} onPlus={() => setQty(q => q + 1)} /><Button className="detail-add" onClick={() => add(product, qty, size)}><ShoppingCart /> Add to Cart · {money(price * qty)}</Button><div className="accordions"><details open><summary>Product Description</summary><p>{product.id === 'cocoa-powder' ? 'Rich, finely milled cocoa powder for chocolate cakes, brownies, cookies and delicious warm drinks. A little chocolate magic for every bake.' : `${product.name} brings the finishing touch to your baking collection. Selected for everyday creations and special celebrations alike.`}</p></details><details><summary>Ingredients</summary><p>{product.id === 'cocoa-powder' ? 'Cocoa powder. Refer to the actual product label for verified ingredients and allergen information.' : 'Refer to the product packaging for materials, ingredients and allergen details.'}</p></details><details><summary>Nutrition Information</summary><p>Nutritional values will be available from the product label. This demo does not provide verified nutritional information.</p></details></div></div></div><section className="related"><SectionTitle title="You might also love" /><ProductGrid items={products.filter(p => p.id !== slug).slice(0, 4)} /></section></div> }
+export function ProductPage({ slug }) {
+  const product = productService.get(slug);
+  const [size, setSize] = useState(product?.size), [qty, setQty] = useState(1);
+  const { add, toggle, wishlist, reviews = [] } = useShop();
+  if (!product) return <div className="content"><Empty title="Product not found" description="There are more lovely supplies waiting for you." /></div>;
+  const price = priceForSize(product, size);
+  const sizes = product.id === 'cocoa-powder' ? ['50 g', '100 g', '200 g'] : [product.size];
+  const prodReviews = reviews.filter(r => r.productId === product.id);
+  const avgRating = prodReviews.length ? (prodReviews.reduce((sum, r) => sum + Number(r.rating || 5), 0) / prodReviews.length).toFixed(1) : '4.8';
+  return (
+    <div className="content">
+      <PageTitle title="A little baking essential" />
+      <div className="detail-layout">
+        <div className="detail-photo">
+          <img src={product.image} alt={product.name} width="700" height="700" />
+          <Button size="icon" variant="ghost" className={`wishlist-button ${wishlist.includes(product.id) ? 'saved' : ''}`} onClick={() => toggle(product.id)} aria-label="Save product to wishlist">
+            <Heart />
+          </Button>
+        </div>
+        <div className="detail-info">
+          <span className="eyebrow">DREAMS BAKING ESSENTIALS</span>
+          <h1>{product.name}</h1>
+          <p>{size} · Carefully selected · Perfect for baking</p>
+          <div className="price-row detail-price">
+            <strong>{money(price)}</strong>
+            {product.original && <del>{money(product.original)}</del>}
+            {product.original && <span className="discount">{Math.round((1 - product.price / product.original) * 100)}% OFF</span>}
+          </div>
+          <div className="availability">
+            <button
+              type="button"
+              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 text-left text-inherit hover:opacity-85 transition-opacity"
+              onClick={() => {
+                document.getElementById('product-reviews-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              aria-label={`Jump to reviews. Rated ${avgRating} stars with ${prodReviews.length} reviews`}
+            >
+              <Star size={13} className="fill-amber-400 text-amber-500" />
+              <strong className="text-foreground">{avgRating}</strong>
+              <span className="text-muted-foreground underline decoration-dotted underline-offset-3">
+                ({prodReviews.length} {prodReviews.length === 1 ? 'review' : 'reviews'})
+              </span>
+            </button>
+            <span className="stock">● In Stock</span>
+          </div>
+          <span className="field-label">Select Size</span>
+          <div className="size-options">
+            {sizes.map(s => (
+              <Button key={s} variant={size === s ? 'selected' : 'outline'} className="size-option" onClick={() => setSize(s)}>
+                {s}<small>{money(priceForSize(product, s))}</small>
+              </Button>
+            ))}
+          </div>
+          <span className="field-label">Quantity</span>
+          <Quantity value={qty} onMinus={() => setQty(q => Math.max(1, q - 1))} onPlus={() => setQty(q => q + 1)} />
+          <Button className="detail-add" onClick={() => add(product, qty, size)}>
+            <ShoppingCart /> Add to Cart · {money(price * qty)}
+          </Button>
+          <div className="accordions">
+            <details open>
+              <summary>Product Description</summary>
+              <p>{product.id === 'cocoa-powder' ? 'Rich, finely milled cocoa powder for chocolate cakes, brownies, cookies and delicious warm drinks. A little chocolate magic for every bake.' : `${product.name} brings the finishing touch to your baking collection. Selected for everyday creations and special celebrations alike.`}</p>
+            </details>
+            <details>
+              <summary>Ingredients</summary>
+              <p>{product.id === 'cocoa-powder' ? 'Cocoa powder. Refer to the actual product label for verified ingredients and allergen information.' : 'Refer to the product packaging for materials, ingredients and allergen details.'}</p>
+            </details>
+            <details>
+              <summary>Nutrition Information</summary>
+              <p>Nutritional values will be available from the product label. This demo does not provide verified nutritional information.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <div id="product-reviews-section">
+        <ProductReviews product={product} />
+      </div>
+
+      <section className="related">
+        <SectionTitle title="You might also love" />
+        <ProductGrid items={products.filter(p => p.id !== slug).slice(0, 4)} />
+      </section>
+    </div>
+  );
+}
 export function SearchPage() { const location = useLocation(); const initial = new URLSearchParams(location.searchStr).get('q') || ''; const [query, setQuery] = useState(initial); const results = productService.search(query); return <div className="content"><PageTitle title="Find your baking essentials" /><div className="search-bar"><input aria-label="Search the shop" placeholder="Try chocolate chips, cake boxes..." value={query} onChange={e => setQuery(e.target.value)} /></div><div className="search-suggestions"><h3>{query ? 'Suggested searches' : 'Popular searches'}</h3><div className="filter-row">{['cake box', 'chocolate chips', 'cocoa powder', 'candles', 'cake'].map(q => <Button key={q} variant="secondary" className="filter-chip" onClick={() => setQuery(q)}>{q}</Button>)}</div></div><SectionTitle title={query ? `${results.length} results for “${query}”` : 'Discover something lovely'} />{results.length ? <ProductGrid items={results} /> : <Empty title="No matches just yet" description="Try cocoa, candles or cake boxes." />}</div> }
 export function WishlistPage() { const { wishlist } = useShop(); const items = products.filter(p => wishlist.includes(p.id)); return <div className="content"><PageTitle title="Your Wishlist" subtitle="A few things for your next bake" />{items.length ? <ProductGrid items={items} /> : <Empty title="A little room for your favorites" description="Save the supplies you love with the heart on each product." />}</div> }
 export function WelcomePage() { return <div className="content"><section className="welcome"><img src={hero} alt="Pink cake with strawberry and butterfly decorations" width="1536" height="1024" /><div className="welcome-copy"><Brand /><h1>Everything You Need<br />to Bake Better</h1><Button asChild><Link to="/">Get Started <ArrowRight /></Link></Button></div></section></div> }
