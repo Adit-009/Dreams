@@ -168,9 +168,9 @@ main {
 }
 
 .brand>svg {
-  width: 41px;
-  height: 45px;
-  stroke-width: 1.5;
+  width: 48px;
+  height: 52px;
+  stroke-width: 1.6;
   color: var(--accent-red)
 }
 
@@ -225,13 +225,14 @@ main {
 .header-action {
   display: flex;
   align-items: center;
-  gap: 7px;
-  font-size: 12px;
+  gap: 8px;
+  font-size: 13px;
   position: relative
 }
 
 .header-action svg {
-  width: 20px
+  width: 25px;
+  height: 25px
 }
 
 .count {
