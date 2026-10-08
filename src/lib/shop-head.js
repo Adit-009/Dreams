@@ -1,0 +1,1 @@
+export const shopHead=(title,description)=>({meta:[{title:`${title} · DREAMS`},{name:'description',content:description},{property:'og:title',content:`${title} · DREAMS`},{property:'og:description',content:description},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]});

@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { ShopProvider } from "../components/shop/store";
+import { Header, BottomNavigation, Footer } from "../components/shop/common";
 
 function NotFoundComponent() {
   return (
@@ -78,16 +80,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "DREAMS · Baking Supplies & More" },
+      { name: "description", content: "Your little world of baking ingredients, decorations, packaging and tools." },
+      { name: "author", content: "DREAMS" },
+      { property: "og:title", content: "DREAMS · Baking Supplies & More" },
+      { property: "og:description", content: "Everything you need to bake better." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" },
       {
         rel: "stylesheet",
         href: appCss,
@@ -121,7 +123,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <ShopProvider>
+        <Header />
+        <main><Outlet /></main>
+        <Footer />
+        <BottomNavigation />
+      </ShopProvider>
     </QueryClientProvider>
   );
 }
