@@ -9,41 +9,10 @@ import { t as Route$14 } from "./order._id-DUCXF3_T.mjs";
 import { t as Route$15 } from "./product._slug-DUnuvy7P.mjs";
 import { t as QueryClient } from "../_libs/tanstack__query-core.mjs";
 import { t as gsapWithCSS } from "../_libs/gsap.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-DV79zWh6.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-Cg9NtvHL.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
-var styles_default = "/assets/styles-CuUKYqmL.css";
-function reportLovableError(error, context = {}) {
-	if (typeof window === "undefined") return;
-	window.__lovableEvents?.captureException?.(error, {
-		source: "react_error_boundary",
-		route: window.location.pathname,
-		...context
-	}, {
-		mechanism: "react_error_boundary",
-		handled: false,
-		severity: "error"
-	});
-	const stack = error instanceof Error ? error.stack : void 0;
-	window.__lovableReportRuntimeError?.({
-		message: describeThrown(error),
-		...stack !== void 0 && { stack },
-		filename: window.location.pathname
-	});
-}
-var MAX_SERIALIZED_LENGTH = 2e3;
-function describeThrown(error) {
-	if (error instanceof Response) return `Response ${error.status}${error.url ? ` at ${error.url}` : ""}`;
-	if (error instanceof Error) return error.message;
-	if (typeof error === "string") return error;
-	const { message } = error ?? {};
-	if (typeof message === "string" && message.length > 0) return message;
-	try {
-		return JSON.stringify(error)?.slice(0, MAX_SERIALIZED_LENGTH) ?? String(error);
-	} catch {
-		return String(error);
-	}
-}
+var styles_default = "/assets/styles-DnkxEHmh.css";
 function SplashScreen() {
 	const [gone, setGone] = (0, import_react.useState)(false);
 	const root = (0, import_react.useRef)(null);
@@ -602,9 +571,7 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }) {
 	console.error(error);
 	const router = useRouter();
-	(0, import_react.useEffect)(() => {
-		reportLovableError(error, { boundary: "tanstack_root_error_component" });
-	}, [error]);
+	(0, import_react.useEffect)(() => {}, [error]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 		className: "flex min-h-screen items-center justify-center bg-background px-4",
 		children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
